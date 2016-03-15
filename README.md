@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/shogo82148/go-http-logger.svg?branch=master)](https://travis-ci.org/shogo82148/go-http-logger)
+
 # go-http-logger
 
 go-http-logger package is a logger for HTTP requests.
