@@ -16,7 +16,7 @@ type Logger interface {
 }
 
 func LoggingHandler(logger Logger, handler http.Handler) http.Handler {
-	return http.HandleFunc(func(w http.ResponseWriter, r *http.Request) {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		l := makeLogger(w)
 		handler.ServeHTTP(l, r)
 		logger.WriteHTTPLog(l, r)

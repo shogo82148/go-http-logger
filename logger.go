@@ -83,7 +83,7 @@ func (l *responseLogger) Flush() {
 	}
 }
 
-func (l *responseLogger) Time() {
+func (l *responseLogger) Time() time.Time {
 	return l.t
 }
 
