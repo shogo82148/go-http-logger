@@ -2,6 +2,7 @@ package httplogger
 
 // implementations of loggingResponseWriter
 // steel from https://github.com/gorilla/handlers/blob/master/handlers.go
+// Copyright (c) 2013 The Gorilla Handlers Authors.
 
 import (
 	"bufio"
