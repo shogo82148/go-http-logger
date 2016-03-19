@@ -6,9 +6,10 @@ import (
 )
 
 type ResponseLog interface {
-	Status() int     // HTTP Status code
-	Size() int       // The size of response body
-	Time() time.Time // Time the request was received
+	Header() http.Header // HTTP Header
+	Status() int         // HTTP Status code
+	Size() int           // The size of response body
+	Time() time.Time     // Time the request was received
 }
 
 type Logger interface {

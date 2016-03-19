@@ -11,6 +11,7 @@ import (
 
 func ExampleLoggingHandler() {
 	originalHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "text/plain")
 		fmt.Fprint(w, "Hello World")
 	})
 
@@ -19,6 +20,7 @@ func ExampleLoggingHandler() {
 		fmt.Println("status:", l.Status())
 		fmt.Println("method:", r.Method)
 		fmt.Println("request uri:", r.RequestURI)
+		fmt.Println("content type:", l.Header().Get("Content-Type"))
 	}), originalHandler)
 
 	ts := httptest.NewServer(loggingHandler)
@@ -35,4 +37,5 @@ func ExampleLoggingHandler() {
 	// status: 200
 	// method: GET
 	// request uri: /
+	// content type: text/plain
 }
