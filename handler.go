@@ -27,10 +27,10 @@ func LoggingHandler(logger Logger, handler http.Handler) http.Handler {
 	})
 }
 
-// The LoggerFunc type is an adaoter to allow the use of ordinary functions as Logger.
+// The LoggerFunc type is an adapter to allow the use of ordinary functions as Logger.
 type LoggerFunc func(l ResponseLog, r *http.Request)
 
-// WriteHTTPLog implementes the Logger interface.
+// WriteHTTPLog implements the Logger interface.
 func (f LoggerFunc) WriteHTTPLog(l ResponseLog, r *http.Request) {
 	f(l, r)
 }
