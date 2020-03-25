@@ -54,30 +54,27 @@ func main() {
 	}
 
 	g.Printf("func wrap(rw *responseWriter) http.ResponseWriter {\n")
+	g.Printf("var n uint\n")
 	for i, iface := range interfaces {
-		g.Printf("_, i%d := rw.rw.(%s)\n", i, iface)
+		g.Printf("if _, ok := rw.rw.(%s); ok {\n n|=0x%x }\n", iface, 1<<uint(i))
 	}
 
-	g.Printf("switch {\n")
+	g.Printf("switch n {\n")
 	combinations := 1 << uint(len(interfaces))
 	values := make([]string, len(interfaces)+1)
 	for i := range values {
 		values[i] = "rw"
 	}
 	for i := 0; i < combinations; i++ {
-		conditions := make([]string, len(interfaces))
 		fields := make([]string, 0, len(interfaces))
 		fields = append(fields, "http.ResponseWriter")
 		for j, iface := range interfaces {
 			ok := i&(1<<uint(len(interfaces)-j-1)) > 0
 			if ok {
 				fields = append(fields, iface)
-				conditions[j] = fmt.Sprintf("i%d", j)
-			} else {
-				conditions[j] = fmt.Sprintf("!i%d", j)
 			}
 		}
-		g.Printf("case %s:\n", strings.Join(conditions, "&&"))
+		g.Printf("case 0x%x:\n", i)
 		g.Printf(
 			"return struct{\n%s\n}{%s}\n",
 			strings.Join(fields, "\n"),

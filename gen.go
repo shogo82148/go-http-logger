@@ -5,100 +5,109 @@ package httplogger
 import "net/http"
 
 func wrap(rw *responseWriter) http.ResponseWriter {
-	_, i0 := rw.rw.(http.Flusher)
-	_, i1 := rw.rw.(http.CloseNotifier)
-	_, i2 := rw.rw.(http.Hijacker)
-	_, i3 := rw.rw.(http.Pusher)
-	switch {
-	case !i0 && !i1 && !i2 && !i3:
+	var n uint
+	if _, ok := rw.rw.(http.Flusher); ok {
+		n |= 0x1
+	}
+	if _, ok := rw.rw.(http.CloseNotifier); ok {
+		n |= 0x2
+	}
+	if _, ok := rw.rw.(http.Hijacker); ok {
+		n |= 0x4
+	}
+	if _, ok := rw.rw.(http.Pusher); ok {
+		n |= 0x8
+	}
+	switch n {
+	case 0x0:
 		return struct {
 			http.ResponseWriter
 		}{rw}
-	case !i0 && !i1 && !i2 && i3:
+	case 0x1:
 		return struct {
 			http.ResponseWriter
 			http.Pusher
 		}{rw, rw}
-	case !i0 && !i1 && i2 && !i3:
+	case 0x2:
 		return struct {
 			http.ResponseWriter
 			http.Hijacker
 		}{rw, rw}
-	case !i0 && !i1 && i2 && i3:
+	case 0x3:
 		return struct {
 			http.ResponseWriter
 			http.Hijacker
 			http.Pusher
 		}{rw, rw, rw}
-	case !i0 && i1 && !i2 && !i3:
+	case 0x4:
 		return struct {
 			http.ResponseWriter
 			http.CloseNotifier
 		}{rw, rw}
-	case !i0 && i1 && !i2 && i3:
+	case 0x5:
 		return struct {
 			http.ResponseWriter
 			http.CloseNotifier
 			http.Pusher
 		}{rw, rw, rw}
-	case !i0 && i1 && i2 && !i3:
+	case 0x6:
 		return struct {
 			http.ResponseWriter
 			http.CloseNotifier
 			http.Hijacker
 		}{rw, rw, rw}
-	case !i0 && i1 && i2 && i3:
+	case 0x7:
 		return struct {
 			http.ResponseWriter
 			http.CloseNotifier
 			http.Hijacker
 			http.Pusher
 		}{rw, rw, rw, rw}
-	case i0 && !i1 && !i2 && !i3:
+	case 0x8:
 		return struct {
 			http.ResponseWriter
 			http.Flusher
 		}{rw, rw}
-	case i0 && !i1 && !i2 && i3:
+	case 0x9:
 		return struct {
 			http.ResponseWriter
 			http.Flusher
 			http.Pusher
 		}{rw, rw, rw}
-	case i0 && !i1 && i2 && !i3:
+	case 0xa:
 		return struct {
 			http.ResponseWriter
 			http.Flusher
 			http.Hijacker
 		}{rw, rw, rw}
-	case i0 && !i1 && i2 && i3:
+	case 0xb:
 		return struct {
 			http.ResponseWriter
 			http.Flusher
 			http.Hijacker
 			http.Pusher
 		}{rw, rw, rw, rw}
-	case i0 && i1 && !i2 && !i3:
+	case 0xc:
 		return struct {
 			http.ResponseWriter
 			http.Flusher
 			http.CloseNotifier
 		}{rw, rw, rw}
-	case i0 && i1 && !i2 && i3:
+	case 0xd:
 		return struct {
 			http.ResponseWriter
 			http.Flusher
 			http.CloseNotifier
 			http.Pusher
 		}{rw, rw, rw, rw}
-	case i0 && i1 && i2 && !i3:
+	case 0xe:
 		return struct {
 			http.ResponseWriter
 			http.Flusher
 			http.CloseNotifier
 			http.Hijacker
 		}{rw, rw, rw, rw}
-	case i0 && i1 && i2 && i3:
+	case 0xf:
 		return struct {
 			http.ResponseWriter
 			http.Flusher
