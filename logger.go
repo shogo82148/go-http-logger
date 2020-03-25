@@ -75,10 +75,3 @@ func (rw *responseWriter) CloseNotify() <-chan bool {
 	n := rw.rw.(http.CloseNotifier)
 	return n.CloseNotify()
 }
-
-func (rw *responseWriter) Push(target string, opts *http.PushOptions) error {
-	if p, ok := rw.rw.(http.Pusher); ok {
-		return p.Push(target, opts)
-	}
-	return http.ErrNotSupported
-}
