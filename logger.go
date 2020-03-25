@@ -4,6 +4,7 @@ package httplogger
 
 import (
 	"bufio"
+	"io"
 	"net"
 	"net/http"
 	"time"
@@ -74,4 +75,18 @@ func (rw *responseWriter) Hijack() (net.Conn, *bufio.ReadWriter, error) {
 func (rw *responseWriter) CloseNotify() <-chan bool {
 	n := rw.rw.(http.CloseNotifier)
 	return n.CloseNotify()
+}
+
+func (rw *responseWriter) WriteString(str string) (int, error) {
+	if s, ok := rw.rw.(io.StringWriter); ok {
+		return s.WriteString(str)
+	}
+	return rw.rw.Write([]byte(str))
+}
+
+func (rw *responseWriter) ReadFrom(src io.Reader) (n int64, err error) {
+	if r, ok := rw.rw.(io.ReaderFrom); ok {
+		return r.ReadFrom(src)
+	}
+	return io.Copy(rw.rw, src)
 }

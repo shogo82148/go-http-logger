@@ -1,4 +1,4 @@
-// +build generate
+// +build ignore
 
 package main
 
@@ -43,13 +43,18 @@ func main() {
 
 	package httplogger
 
-	import "net/http"
+	import (
+		"net/http"
+		"io"
+	)
 	`)
 
 	interfaces := []string{
 		"http.Flusher",
 		"http.CloseNotifier",
 		"http.Hijacker",
+		"io.ReaderFrom",
+		"io.StringWriter",
 		"http.Pusher",
 	}
 
