@@ -94,7 +94,7 @@ func main() {
 		"http.CloseNotifier",
 		"http.Hijacker",
 		"io.ReaderFrom",
-		"io.StringWriter",
+		"stringWriter",
 		"http.Pusher",
 	}, "wrap_ge_go18.go", "go1.8")
 	generate([]string{
@@ -102,6 +102,6 @@ func main() {
 		"http.CloseNotifier",
 		"http.Hijacker",
 		"io.ReaderFrom",
-		"io.StringWriter",
+		"stringWriter",
 	}, "wrap_lt_go18.go", "!go1.8")
 }

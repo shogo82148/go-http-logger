@@ -10,6 +10,11 @@ import (
 	"time"
 )
 
+// backport of io.StringWriter from Go 1.11
+type stringWriter interface {
+	WriteString(s string) (n int, err error)
+}
+
 // responseWriter is wrapper of http.ResponseWriter that keeps track of its HTTP
 // status code and body size
 type responseWriter struct {
