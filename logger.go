@@ -1,8 +1,6 @@
 package httplogger
 
-// implementations of loggingResponseWriter
-// steel from https://github.com/gorilla/handlers/blob/master/handlers.go
-// Copyright (c) 2013 The Gorilla Handlers Authors.
+//go:generate go run codegen.go
 
 import (
 	"bufio"
@@ -11,105 +9,76 @@ import (
 	"time"
 )
 
-type loggingResponseWriter interface {
-	http.ResponseWriter
-	http.Flusher
-	Status() int
-	Size() int
-	Time() time.Time
-}
-
-func makeLogger(w http.ResponseWriter) loggingResponseWriter {
-	var logger loggingResponseWriter
-	if _, ok := w.(http.Hijacker); ok {
-		logger = &hijackLogger{responseLogger{w: w, t: time.Now()}}
-	} else {
-		logger = &responseLogger{w: w, t: time.Now()}
-	}
-	h, ok1 := logger.(http.Hijacker)
-	c, ok2 := w.(http.CloseNotifier)
-	if ok1 && ok2 {
-		return hijackCloseNotifier{logger, h, c}
-	}
-	if ok2 {
-		return &closeNotifyWriter{logger, c}
-	}
-	return logger
-}
-
-// ResponseLogger is wrapper of http.ResponseWriter that keeps track of its HTTP
+// responseWriter is wrapper of http.ResponseWriter that keeps track of its HTTP
 // status code and body size
-type responseLogger struct {
-	w      http.ResponseWriter
+type responseWriter struct {
+	rw     http.ResponseWriter
 	status int
 	size   int
 	t      time.Time
 }
 
-func (l *responseLogger) Header() http.Header {
-	return l.w.Header()
+func (rw *responseWriter) Header() http.Header {
+	return rw.rw.Header()
 }
 
-func (l *responseLogger) Write(b []byte) (int, error) {
-	if l.status == 0 {
+func (rw *responseWriter) Write(b []byte) (int, error) {
+	if rw.status == 0 {
 		// The status will be StatusOK if WriteHeader has not been called yet
-		l.status = http.StatusOK
+		rw.status = http.StatusOK
 	}
-	size, err := l.w.Write(b)
-	l.size += size
+	size, err := rw.rw.Write(b)
+	rw.size += size
 	return size, err
 }
 
-func (l *responseLogger) WriteHeader(s int) {
-	l.w.WriteHeader(s)
-	l.status = s
+func (rw *responseWriter) WriteHeader(s int) {
+	rw.rw.WriteHeader(s)
+	rw.status = s
 }
 
-func (l *responseLogger) Status() int {
-	if l.status == 0 {
+func (rw *responseWriter) Status() int {
+	if rw.status == 0 {
 		// The status will be StatusOK if WriteHeader has not been called yet
-		l.status = http.StatusOK
+		rw.status = http.StatusOK
 	}
-	return l.status
+	return rw.status
 }
 
-func (l *responseLogger) Size() int {
-	return l.size
+func (rw *responseWriter) Size() int {
+	return rw.size
 }
 
-func (l *responseLogger) Flush() {
-	f, ok := l.w.(http.Flusher)
+func (rw *responseWriter) Flush() {
+	f, ok := rw.rw.(http.Flusher)
 	if ok {
 		f.Flush()
 	}
 }
 
-func (l *responseLogger) Time() time.Time {
-	return l.t
+func (rw *responseWriter) Time() time.Time {
+	return rw.t
 }
 
-type hijackLogger struct {
-	responseLogger
-}
-
-func (l *hijackLogger) Hijack() (net.Conn, *bufio.ReadWriter, error) {
-	h := l.responseLogger.w.(http.Hijacker)
-	conn, rw, err := h.Hijack()
-	if err == nil && l.responseLogger.status == 0 {
+func (rw *responseWriter) Hijack() (net.Conn, *bufio.ReadWriter, error) {
+	h := rw.rw.(http.Hijacker)
+	conn, buf, err := h.Hijack()
+	if err == nil && rw.status == 0 {
 		// The status will be StatusSwitchingProtocols if there was no error and
 		// WriteHeader has not been called yet
-		l.responseLogger.status = http.StatusSwitchingProtocols
+		rw.status = http.StatusSwitchingProtocols
 	}
-	return conn, rw, err
+	return conn, buf, err
 }
 
-type closeNotifyWriter struct {
-	loggingResponseWriter
-	http.CloseNotifier
+func (rw *responseWriter) CloseNotify() <-chan bool {
+	n := rw.rw.(http.CloseNotifier)
+	return n.CloseNotify()
 }
 
-type hijackCloseNotifier struct {
-	loggingResponseWriter
-	http.Hijacker
-	http.CloseNotifier
+func (rw *responseWriter) Push(target string, opts *http.PushOptions) error {
+	if p, ok := rw.rw.(http.Pusher); ok {
+		return p.Push(target, opts)
+	}
+	return http.ErrNotSupported
 }

@@ -21,9 +21,9 @@ type Logger interface {
 // LoggingHandler wraps the HTTP handler with the logger.
 func LoggingHandler(logger Logger, handler http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		l := makeLogger(w)
-		handler.ServeHTTP(l, r)
-		logger.WriteHTTPLog(l, r)
+		lrw := &responseWriter{rw: w}
+		handler.ServeHTTP(wrap(lrw), r)
+		logger.WriteHTTPLog(lrw, r)
 	})
 }
 
