@@ -83,7 +83,7 @@ func (rw *responseWriter) CloseNotify() <-chan bool {
 }
 
 func (rw *responseWriter) WriteString(str string) (int, error) {
-	if s, ok := rw.rw.(io.StringWriter); ok {
+	if s, ok := rw.rw.(stringWriter); ok {
 		return s.WriteString(str)
 	}
 	return rw.rw.Write([]byte(str))
