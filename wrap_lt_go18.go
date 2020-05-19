@@ -34,18 +34,18 @@ func wrap(rw *responseWriter) http.ResponseWriter {
 	case 0x1:
 		return struct {
 			http.ResponseWriter
-			stringWriter
+			http.Flusher
 		}{rw, rw}
 	case 0x2:
 		return struct {
 			http.ResponseWriter
-			io.ReaderFrom
+			http.CloseNotifier
 		}{rw, rw}
 	case 0x3:
 		return struct {
 			http.ResponseWriter
-			io.ReaderFrom
-			stringWriter
+			http.Flusher
+			http.CloseNotifier
 		}{rw, rw, rw}
 	case 0x4:
 		return struct {
@@ -55,32 +55,32 @@ func wrap(rw *responseWriter) http.ResponseWriter {
 	case 0x5:
 		return struct {
 			http.ResponseWriter
+			http.Flusher
 			http.Hijacker
-			stringWriter
 		}{rw, rw, rw}
 	case 0x6:
 		return struct {
 			http.ResponseWriter
+			http.CloseNotifier
 			http.Hijacker
-			io.ReaderFrom
 		}{rw, rw, rw}
 	case 0x7:
 		return struct {
 			http.ResponseWriter
+			http.Flusher
+			http.CloseNotifier
 			http.Hijacker
-			io.ReaderFrom
-			stringWriter
 		}{rw, rw, rw, rw}
 	case 0x8:
 		return struct {
 			http.ResponseWriter
-			http.CloseNotifier
+			io.ReaderFrom
 		}{rw, rw}
 	case 0x9:
 		return struct {
 			http.ResponseWriter
-			http.CloseNotifier
-			stringWriter
+			http.Flusher
+			io.ReaderFrom
 		}{rw, rw, rw}
 	case 0xa:
 		return struct {
@@ -91,22 +91,22 @@ func wrap(rw *responseWriter) http.ResponseWriter {
 	case 0xb:
 		return struct {
 			http.ResponseWriter
+			http.Flusher
 			http.CloseNotifier
 			io.ReaderFrom
-			stringWriter
 		}{rw, rw, rw, rw}
 	case 0xc:
 		return struct {
 			http.ResponseWriter
-			http.CloseNotifier
 			http.Hijacker
+			io.ReaderFrom
 		}{rw, rw, rw}
 	case 0xd:
 		return struct {
 			http.ResponseWriter
-			http.CloseNotifier
+			http.Flusher
 			http.Hijacker
-			stringWriter
+			io.ReaderFrom
 		}{rw, rw, rw, rw}
 	case 0xe:
 		return struct {
@@ -118,15 +118,15 @@ func wrap(rw *responseWriter) http.ResponseWriter {
 	case 0xf:
 		return struct {
 			http.ResponseWriter
+			http.Flusher
 			http.CloseNotifier
 			http.Hijacker
 			io.ReaderFrom
-			stringWriter
 		}{rw, rw, rw, rw, rw}
 	case 0x10:
 		return struct {
 			http.ResponseWriter
-			http.Flusher
+			stringWriter
 		}{rw, rw}
 	case 0x11:
 		return struct {
@@ -137,21 +137,21 @@ func wrap(rw *responseWriter) http.ResponseWriter {
 	case 0x12:
 		return struct {
 			http.ResponseWriter
-			http.Flusher
-			io.ReaderFrom
+			http.CloseNotifier
+			stringWriter
 		}{rw, rw, rw}
 	case 0x13:
 		return struct {
 			http.ResponseWriter
 			http.Flusher
-			io.ReaderFrom
+			http.CloseNotifier
 			stringWriter
 		}{rw, rw, rw, rw}
 	case 0x14:
 		return struct {
 			http.ResponseWriter
-			http.Flusher
 			http.Hijacker
+			stringWriter
 		}{rw, rw, rw}
 	case 0x15:
 		return struct {
@@ -163,37 +163,37 @@ func wrap(rw *responseWriter) http.ResponseWriter {
 	case 0x16:
 		return struct {
 			http.ResponseWriter
-			http.Flusher
+			http.CloseNotifier
 			http.Hijacker
-			io.ReaderFrom
+			stringWriter
 		}{rw, rw, rw, rw}
 	case 0x17:
 		return struct {
 			http.ResponseWriter
 			http.Flusher
+			http.CloseNotifier
 			http.Hijacker
-			io.ReaderFrom
 			stringWriter
 		}{rw, rw, rw, rw, rw}
 	case 0x18:
 		return struct {
 			http.ResponseWriter
-			http.Flusher
-			http.CloseNotifier
+			io.ReaderFrom
+			stringWriter
 		}{rw, rw, rw}
 	case 0x19:
 		return struct {
 			http.ResponseWriter
 			http.Flusher
-			http.CloseNotifier
+			io.ReaderFrom
 			stringWriter
 		}{rw, rw, rw, rw}
 	case 0x1a:
 		return struct {
 			http.ResponseWriter
-			http.Flusher
 			http.CloseNotifier
 			io.ReaderFrom
+			stringWriter
 		}{rw, rw, rw, rw}
 	case 0x1b:
 		return struct {
@@ -206,25 +206,25 @@ func wrap(rw *responseWriter) http.ResponseWriter {
 	case 0x1c:
 		return struct {
 			http.ResponseWriter
-			http.Flusher
-			http.CloseNotifier
 			http.Hijacker
+			io.ReaderFrom
+			stringWriter
 		}{rw, rw, rw, rw}
 	case 0x1d:
 		return struct {
 			http.ResponseWriter
 			http.Flusher
-			http.CloseNotifier
 			http.Hijacker
+			io.ReaderFrom
 			stringWriter
 		}{rw, rw, rw, rw, rw}
 	case 0x1e:
 		return struct {
 			http.ResponseWriter
-			http.Flusher
 			http.CloseNotifier
 			http.Hijacker
 			io.ReaderFrom
+			stringWriter
 		}{rw, rw, rw, rw, rw}
 	case 0x1f:
 		return struct {

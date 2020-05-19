@@ -108,7 +108,7 @@ func TestWrap_ReaderFrom(t *testing.T) {
 	if _, ok := got.(http.Hijacker); ok {
 		t.Error("want not to implement http.Hijacker, but it does")
 	}
-	if _, ok := got.(io.ReaderFrom); ok {
+	if _, ok := got.(io.ReaderFrom); !ok {
 		t.Error("want to implement http.ReaderFrom, but it doesn't")
 	}
 	if _, ok := got.(stringWriter); ok {
@@ -138,7 +138,7 @@ func TestWrap_StringWriter(t *testing.T) {
 	if _, ok := got.(io.ReaderFrom); ok {
 		t.Error("want not to implement http.ReaderFrom, but it does")
 	}
-	if _, ok := got.(stringWriter); ok {
+	if _, ok := got.(stringWriter); !ok {
 		t.Error("want to implement io.StringWriter, but it doesn't")
 	}
 }
