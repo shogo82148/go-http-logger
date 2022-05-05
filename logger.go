@@ -95,3 +95,10 @@ func (rw *responseWriter) ReadFrom(src io.Reader) (n int64, err error) {
 	}
 	return io.Copy(rw.rw, src)
 }
+
+func (rw *responseWriter) Push(target string, opts *http.PushOptions) error {
+	if p, ok := rw.rw.(http.Pusher); ok {
+		return p.Push(target, opts)
+	}
+	return http.ErrNotSupported
+}
