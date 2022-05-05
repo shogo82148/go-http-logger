@@ -19,9 +19,6 @@ jobs:
           - "1.13"
           - "1.12"
           - "1.11"
-          - "1.10"
-          - "1.9"
-          - "1.8"
 
     steps:
       - uses: actions/checkout@v3
@@ -29,6 +26,10 @@ jobs:
         uses: actions/setup-go@v3
         with:
           go-version: ${{ matrix.go }}
+      - run: |
+          go version
+          echo GOPATH="$GITHUB_WORKSPACE" >> "$GITHUB_ENV"
+        shell: bash
 
       - name: test
         run: |
