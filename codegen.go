@@ -93,7 +93,7 @@ func main() {
 		"http.CloseNotifier",
 		"http.Hijacker",
 		"io.ReaderFrom",
-		"stringWriter",
+		"io.StringWriter",
 		"http.Pusher",
 	}, "wrap.go")
 }

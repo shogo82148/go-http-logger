@@ -1,16 +1,46 @@
 package httplogger
 
 import (
+	"io"
 	"net/http"
 	"time"
 )
 
+type private interface {
+	private()
+}
+
 // ResponseLog is the information of the response.
 type ResponseLog interface {
-	Header() http.Header // HTTP Header
-	Status() int         // HTTP Status code
-	Size() int           // The size of response body
-	Time() time.Time     // Time the request was received
+	// Header returns HTTP Header of the response.
+	Header() http.Header
+
+	// Status returns HTTP Status code.
+	Status() int
+
+	// The size of response body.
+	//
+	// Deprecated: Use ResponseSize instead.
+	Size() int
+
+	// Time returns the time when the request was received.
+	//
+	// Deprecated: Use RequestTime instead.
+	Time() time.Time
+
+	// RequestSize returns the size of request body.
+	RequestSize() int64
+
+	// ResponseSize returns the size of response body.
+	ResponseSize() int64
+
+	// RequestTime returns the time when the request was received.
+	RequestTime() time.Time
+
+	// WriteHeaderTime returns the time when the response header was written.
+	WriteHeaderTime() time.Time
+
+	private // avoid users to implement this interface
 }
 
 // Logger is the interface for your custom logger.
@@ -24,13 +54,18 @@ type loggingHandler struct {
 }
 
 func (h *loggingHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	req := *r // shallow copy
+	body := &sizeReader{r: r.Body}
+	req.Body = body
 	lrw := &responseWriter{
-		rw:     w,
-		req:    r,
-		logger: h.logger,
+		rw:          w,
+		req:         &req,
+		logger:      h.logger,
+		requestTime: time.Now(),
 	}
 	h.handler.ServeHTTP(wrap(lrw), r)
 	if !lrw.hijacked {
+		io.Copy(io.Discard, body)
 		h.logger.WriteHTTPLog(lrw, r)
 	}
 }

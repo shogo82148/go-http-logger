@@ -39,7 +39,7 @@ func TestWrap_Flusher(t *testing.T) {
 	if _, ok := got.(io.ReaderFrom); ok {
 		t.Error("want not to implement http.ReaderFrom, but it does")
 	}
-	if _, ok := got.(stringWriter); ok {
+	if _, ok := got.(io.StringWriter); ok {
 		t.Error("want not to implement io.StringWriter, but it does")
 	}
 	if _, ok := got.(http.Pusher); ok {
@@ -77,7 +77,7 @@ func TestWrap_CloseNotify(t *testing.T) {
 	if _, ok := got.(io.ReaderFrom); ok {
 		t.Error("want not to implement http.ReaderFrom, but it does")
 	}
-	if _, ok := got.(stringWriter); ok {
+	if _, ok := got.(io.StringWriter); ok {
 		t.Error("want not to implement io.StringWriter, but it does")
 	}
 	if _, ok := got.(http.Pusher); ok {
@@ -107,7 +107,7 @@ func TestWrap_Hijacker(t *testing.T) {
 	if _, ok := got.(io.ReaderFrom); ok {
 		t.Error("want not to implement http.ReaderFrom, but it does")
 	}
-	if _, ok := got.(stringWriter); ok {
+	if _, ok := got.(io.StringWriter); ok {
 		t.Error("want not to implement io.StringWriter, but it does")
 	}
 	if _, ok := got.(http.Pusher); ok {
@@ -144,7 +144,7 @@ func TestWrap_ReaderFrom(t *testing.T) {
 	if rw.buf.String() != "hello" {
 		t.Errorf("got %q, want %q", rw.buf.String(), "hello")
 	}
-	if _, ok := got.(stringWriter); ok {
+	if _, ok := got.(io.StringWriter); ok {
 		t.Error("want not to implement io.StringWriter, but it does")
 	}
 	if _, ok := got.(http.Pusher); ok {
@@ -176,7 +176,7 @@ func TestWrap_StringWriter(t *testing.T) {
 	if _, ok := got.(io.ReaderFrom); ok {
 		t.Error("want not to implement http.ReaderFrom, but it does")
 	}
-	if sw, ok := got.(stringWriter); !ok {
+	if sw, ok := got.(io.StringWriter); !ok {
 		t.Error("want to implement io.StringWriter, but it doesn't")
 	} else {
 		sw.WriteString("hello")
@@ -214,7 +214,7 @@ func TestWrap_Pusher(t *testing.T) {
 	if _, ok := got.(io.ReaderFrom); ok {
 		t.Error("want not to implement http.ReaderFrom, but it does")
 	}
-	if _, ok := got.(stringWriter); ok {
+	if _, ok := got.(io.StringWriter); ok {
 		t.Error("want not to implement io.StringWriter, but it does")
 	}
 	if pusher, ok := got.(http.Pusher); !ok {

@@ -24,7 +24,7 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 }
 
 func Logger(l httplogger.ResponseLog, r *http.Request) {
-	log.Println("size:", l.Size())
+	log.Println("size:", l.RequestSize())
 	log.Println("status:", l.Status())
 	log.Println("method:", r.Method)
 	log.Println("request uri:", r.RequestURI)

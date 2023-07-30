@@ -21,7 +21,7 @@ func wrap(rw *responseWriter) http.ResponseWriter {
 	if _, ok := rw.rw.(io.ReaderFrom); ok {
 		n |= 0x8
 	}
-	if _, ok := rw.rw.(stringWriter); ok {
+	if _, ok := rw.rw.(io.StringWriter); ok {
 		n |= 0x10
 	}
 	if _, ok := rw.rw.(http.Pusher); ok {
@@ -144,21 +144,21 @@ func wrap(rw *responseWriter) http.ResponseWriter {
 		return struct {
 			http.ResponseWriter
 			rwUnwrapper
-			stringWriter
+			io.StringWriter
 		}{rw, rw, rw}
 	case 0x11:
 		return struct {
 			http.ResponseWriter
 			rwUnwrapper
 			http.Flusher
-			stringWriter
+			io.StringWriter
 		}{rw, rw, rw, rw}
 	case 0x12:
 		return struct {
 			http.ResponseWriter
 			rwUnwrapper
 			http.CloseNotifier
-			stringWriter
+			io.StringWriter
 		}{rw, rw, rw, rw}
 	case 0x13:
 		return struct {
@@ -166,14 +166,14 @@ func wrap(rw *responseWriter) http.ResponseWriter {
 			rwUnwrapper
 			http.Flusher
 			http.CloseNotifier
-			stringWriter
+			io.StringWriter
 		}{rw, rw, rw, rw, rw}
 	case 0x14:
 		return struct {
 			http.ResponseWriter
 			rwUnwrapper
 			http.Hijacker
-			stringWriter
+			io.StringWriter
 		}{rw, rw, rw, rw}
 	case 0x15:
 		return struct {
@@ -181,7 +181,7 @@ func wrap(rw *responseWriter) http.ResponseWriter {
 			rwUnwrapper
 			http.Flusher
 			http.Hijacker
-			stringWriter
+			io.StringWriter
 		}{rw, rw, rw, rw, rw}
 	case 0x16:
 		return struct {
@@ -189,7 +189,7 @@ func wrap(rw *responseWriter) http.ResponseWriter {
 			rwUnwrapper
 			http.CloseNotifier
 			http.Hijacker
-			stringWriter
+			io.StringWriter
 		}{rw, rw, rw, rw, rw}
 	case 0x17:
 		return struct {
@@ -198,14 +198,14 @@ func wrap(rw *responseWriter) http.ResponseWriter {
 			http.Flusher
 			http.CloseNotifier
 			http.Hijacker
-			stringWriter
+			io.StringWriter
 		}{rw, rw, rw, rw, rw, rw}
 	case 0x18:
 		return struct {
 			http.ResponseWriter
 			rwUnwrapper
 			io.ReaderFrom
-			stringWriter
+			io.StringWriter
 		}{rw, rw, rw, rw}
 	case 0x19:
 		return struct {
@@ -213,7 +213,7 @@ func wrap(rw *responseWriter) http.ResponseWriter {
 			rwUnwrapper
 			http.Flusher
 			io.ReaderFrom
-			stringWriter
+			io.StringWriter
 		}{rw, rw, rw, rw, rw}
 	case 0x1a:
 		return struct {
@@ -221,7 +221,7 @@ func wrap(rw *responseWriter) http.ResponseWriter {
 			rwUnwrapper
 			http.CloseNotifier
 			io.ReaderFrom
-			stringWriter
+			io.StringWriter
 		}{rw, rw, rw, rw, rw}
 	case 0x1b:
 		return struct {
@@ -230,7 +230,7 @@ func wrap(rw *responseWriter) http.ResponseWriter {
 			http.Flusher
 			http.CloseNotifier
 			io.ReaderFrom
-			stringWriter
+			io.StringWriter
 		}{rw, rw, rw, rw, rw, rw}
 	case 0x1c:
 		return struct {
@@ -238,7 +238,7 @@ func wrap(rw *responseWriter) http.ResponseWriter {
 			rwUnwrapper
 			http.Hijacker
 			io.ReaderFrom
-			stringWriter
+			io.StringWriter
 		}{rw, rw, rw, rw, rw}
 	case 0x1d:
 		return struct {
@@ -247,7 +247,7 @@ func wrap(rw *responseWriter) http.ResponseWriter {
 			http.Flusher
 			http.Hijacker
 			io.ReaderFrom
-			stringWriter
+			io.StringWriter
 		}{rw, rw, rw, rw, rw, rw}
 	case 0x1e:
 		return struct {
@@ -256,7 +256,7 @@ func wrap(rw *responseWriter) http.ResponseWriter {
 			http.CloseNotifier
 			http.Hijacker
 			io.ReaderFrom
-			stringWriter
+			io.StringWriter
 		}{rw, rw, rw, rw, rw, rw}
 	case 0x1f:
 		return struct {
@@ -266,7 +266,7 @@ func wrap(rw *responseWriter) http.ResponseWriter {
 			http.CloseNotifier
 			http.Hijacker
 			io.ReaderFrom
-			stringWriter
+			io.StringWriter
 		}{rw, rw, rw, rw, rw, rw, rw}
 	case 0x20:
 		return struct {
@@ -400,7 +400,7 @@ func wrap(rw *responseWriter) http.ResponseWriter {
 		return struct {
 			http.ResponseWriter
 			rwUnwrapper
-			stringWriter
+			io.StringWriter
 			http.Pusher
 		}{rw, rw, rw, rw}
 	case 0x31:
@@ -408,7 +408,7 @@ func wrap(rw *responseWriter) http.ResponseWriter {
 			http.ResponseWriter
 			rwUnwrapper
 			http.Flusher
-			stringWriter
+			io.StringWriter
 			http.Pusher
 		}{rw, rw, rw, rw, rw}
 	case 0x32:
@@ -416,7 +416,7 @@ func wrap(rw *responseWriter) http.ResponseWriter {
 			http.ResponseWriter
 			rwUnwrapper
 			http.CloseNotifier
-			stringWriter
+			io.StringWriter
 			http.Pusher
 		}{rw, rw, rw, rw, rw}
 	case 0x33:
@@ -425,7 +425,7 @@ func wrap(rw *responseWriter) http.ResponseWriter {
 			rwUnwrapper
 			http.Flusher
 			http.CloseNotifier
-			stringWriter
+			io.StringWriter
 			http.Pusher
 		}{rw, rw, rw, rw, rw, rw}
 	case 0x34:
@@ -433,7 +433,7 @@ func wrap(rw *responseWriter) http.ResponseWriter {
 			http.ResponseWriter
 			rwUnwrapper
 			http.Hijacker
-			stringWriter
+			io.StringWriter
 			http.Pusher
 		}{rw, rw, rw, rw, rw}
 	case 0x35:
@@ -442,7 +442,7 @@ func wrap(rw *responseWriter) http.ResponseWriter {
 			rwUnwrapper
 			http.Flusher
 			http.Hijacker
-			stringWriter
+			io.StringWriter
 			http.Pusher
 		}{rw, rw, rw, rw, rw, rw}
 	case 0x36:
@@ -451,7 +451,7 @@ func wrap(rw *responseWriter) http.ResponseWriter {
 			rwUnwrapper
 			http.CloseNotifier
 			http.Hijacker
-			stringWriter
+			io.StringWriter
 			http.Pusher
 		}{rw, rw, rw, rw, rw, rw}
 	case 0x37:
@@ -461,7 +461,7 @@ func wrap(rw *responseWriter) http.ResponseWriter {
 			http.Flusher
 			http.CloseNotifier
 			http.Hijacker
-			stringWriter
+			io.StringWriter
 			http.Pusher
 		}{rw, rw, rw, rw, rw, rw, rw}
 	case 0x38:
@@ -469,7 +469,7 @@ func wrap(rw *responseWriter) http.ResponseWriter {
 			http.ResponseWriter
 			rwUnwrapper
 			io.ReaderFrom
-			stringWriter
+			io.StringWriter
 			http.Pusher
 		}{rw, rw, rw, rw, rw}
 	case 0x39:
@@ -478,7 +478,7 @@ func wrap(rw *responseWriter) http.ResponseWriter {
 			rwUnwrapper
 			http.Flusher
 			io.ReaderFrom
-			stringWriter
+			io.StringWriter
 			http.Pusher
 		}{rw, rw, rw, rw, rw, rw}
 	case 0x3a:
@@ -487,7 +487,7 @@ func wrap(rw *responseWriter) http.ResponseWriter {
 			rwUnwrapper
 			http.CloseNotifier
 			io.ReaderFrom
-			stringWriter
+			io.StringWriter
 			http.Pusher
 		}{rw, rw, rw, rw, rw, rw}
 	case 0x3b:
@@ -497,7 +497,7 @@ func wrap(rw *responseWriter) http.ResponseWriter {
 			http.Flusher
 			http.CloseNotifier
 			io.ReaderFrom
-			stringWriter
+			io.StringWriter
 			http.Pusher
 		}{rw, rw, rw, rw, rw, rw, rw}
 	case 0x3c:
@@ -506,7 +506,7 @@ func wrap(rw *responseWriter) http.ResponseWriter {
 			rwUnwrapper
 			http.Hijacker
 			io.ReaderFrom
-			stringWriter
+			io.StringWriter
 			http.Pusher
 		}{rw, rw, rw, rw, rw, rw}
 	case 0x3d:
@@ -516,7 +516,7 @@ func wrap(rw *responseWriter) http.ResponseWriter {
 			http.Flusher
 			http.Hijacker
 			io.ReaderFrom
-			stringWriter
+			io.StringWriter
 			http.Pusher
 		}{rw, rw, rw, rw, rw, rw, rw}
 	case 0x3e:
@@ -526,7 +526,7 @@ func wrap(rw *responseWriter) http.ResponseWriter {
 			http.CloseNotifier
 			http.Hijacker
 			io.ReaderFrom
-			stringWriter
+			io.StringWriter
 			http.Pusher
 		}{rw, rw, rw, rw, rw, rw, rw}
 	case 0x3f:
@@ -537,7 +537,7 @@ func wrap(rw *responseWriter) http.ResponseWriter {
 			http.CloseNotifier
 			http.Hijacker
 			io.ReaderFrom
-			stringWriter
+			io.StringWriter
 			http.Pusher
 		}{rw, rw, rw, rw, rw, rw, rw, rw}
 	}
