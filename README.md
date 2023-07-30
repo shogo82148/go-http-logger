@@ -1,4 +1,5 @@
-[![Build Status](https://travis-ci.org/shogo82148/go-http-logger.svg?branch=master)](https://travis-ci.org/shogo82148/go-http-logger)
+[![test](https://github.com/shogo82148/go-http-logger/actions/workflows/test.yml/badge.svg)](https://github.com/shogo82148/go-http-logger/actions/workflows/test.yml)
+[![Go Reference](https://pkg.go.dev/badge/github.com/shogo82148/go-http-logger.svg)](https://pkg.go.dev/github.com/shogo82148/go-http-logger)
 
 # go-http-logger
 
@@ -7,7 +8,7 @@ It is similar to "github.com/gorilla/handlers".LoggingHandler, but more flexible
 
 ## SYNOPSIS
 
-``` go
+```go
 package main
 
 import (
@@ -35,7 +36,6 @@ func main() {
 	http.ListenAndServe(":8000", nil)
 }
 ```
-
 
 ## LICENSE
 
