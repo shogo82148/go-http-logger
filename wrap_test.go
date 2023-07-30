@@ -41,6 +41,9 @@ func TestWrap_Flusher(t *testing.T) {
 	if _, ok := got.(stringWriter); ok {
 		t.Error("want not to implement io.StringWriter, but it does")
 	}
+	if _, ok := got.(http.Pusher); ok {
+		t.Error("want not to implement http.Pusher, but it does")
+	}
 }
 
 type dummyCloseNotifier struct {
@@ -76,6 +79,9 @@ func TestWrap_CloseNotify(t *testing.T) {
 	if _, ok := got.(stringWriter); ok {
 		t.Error("want not to implement io.StringWriter, but it does")
 	}
+	if _, ok := got.(http.Pusher); ok {
+		t.Error("want not to implement http.Pusher, but it does")
+	}
 }
 
 type dummyHijacker struct {
@@ -103,6 +109,9 @@ func TestWrap_Hijacker(t *testing.T) {
 	if _, ok := got.(stringWriter); ok {
 		t.Error("want not to implement io.StringWriter, but it does")
 	}
+	if _, ok := got.(http.Pusher); ok {
+		t.Error("want not to implement http.Pusher, but it does")
+	}
 }
 
 type dummyReaderFrom struct {
@@ -129,6 +138,9 @@ func TestWrap_ReaderFrom(t *testing.T) {
 	}
 	if _, ok := got.(stringWriter); ok {
 		t.Error("want not to implement io.StringWriter, but it does")
+	}
+	if _, ok := got.(http.Pusher); ok {
+		t.Error("want not to implement http.Pusher, but it does")
 	}
 }
 
@@ -163,5 +175,46 @@ func TestWrap_StringWriter(t *testing.T) {
 	}
 	if rw.buf.String() != "hello" {
 		t.Errorf("want %q, but %q", "hello", rw.buf.String())
+	}
+	if _, ok := got.(http.Pusher); ok {
+		t.Error("want not to implement http.Pusher, but it does")
+	}
+}
+
+type dummyPusher struct {
+	http.ResponseWriter
+	called bool
+}
+
+func (rw *dummyPusher) Push(target string, opts *http.PushOptions) error {
+	rw.called = true
+	return nil
+}
+
+func TestWrap_Pusher(t *testing.T) {
+	rw := &dummyPusher{}
+	got := wrap(&responseWriter{rw: rw})
+	if _, ok := got.(http.Flusher); ok {
+		t.Error("want not to implement http.Flusher, but it does")
+	}
+	if _, ok := got.(http.CloseNotifier); ok {
+		t.Error("want not to implement http.CloseNotifier, but it does")
+	}
+	if _, ok := got.(http.Hijacker); ok {
+		t.Error("want not to implement http.Hijacker, but it does")
+	}
+	if _, ok := got.(io.ReaderFrom); ok {
+		t.Error("want not to implement http.ReaderFrom, but it does")
+	}
+	if _, ok := got.(stringWriter); ok {
+		t.Error("want not to implement io.StringWriter, but it does")
+	}
+	if pusher, ok := got.(http.Pusher); !ok {
+		t.Error("want to implement http.Pusher, but it doesn't")
+	} else {
+		pusher.Push("", nil)
+	}
+	if !rw.called {
+		t.Error("Push() is not called")
 	}
 }
