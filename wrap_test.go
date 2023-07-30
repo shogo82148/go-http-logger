@@ -44,19 +44,27 @@ func TestWrap_Flusher(t *testing.T) {
 
 type dummyCloseNotifier struct {
 	http.ResponseWriter
+	called bool
 }
 
-func (dummyCloseNotifier) CloseNotify() <-chan bool {
-	panic("unreachable")
+func (rw *dummyCloseNotifier) CloseNotify() <-chan bool {
+	rw.called = true
+	return nil
 }
 
 func TestWrap_CloseNotify(t *testing.T) {
-	got := wrap(&responseWriter{rw: dummyCloseNotifier{}})
+	rw := &dummyCloseNotifier{}
+	got := wrap(&responseWriter{rw: rw})
 	if _, ok := got.(http.Flusher); ok {
 		t.Error("want not to implement http.Flusher, but it does")
 	}
-	if _, ok := got.(http.CloseNotifier); !ok {
+	if notifier, ok := got.(http.CloseNotifier); !ok {
 		t.Error("want to implement http.CloseNotifier, but it doesn't")
+	} else {
+		notifier.CloseNotify()
+	}
+	if !rw.called {
+		t.Error("CloseNotify() is not called")
 	}
 	if _, ok := got.(http.Hijacker); ok {
 		t.Error("want not to implement http.Hijacker, but it does")
