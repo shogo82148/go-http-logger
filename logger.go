@@ -28,6 +28,7 @@ type rwUnwrapper interface {
 type responseWriter struct {
 	rw              http.ResponseWriter
 	req             *http.Request
+	reqBody         *sizeReader
 	logger          Logger
 	wroteHeader     bool
 	status          int
@@ -153,7 +154,7 @@ func (rw *responseWriter) Unwrap() http.ResponseWriter {
 
 // RequestSize returns the size of request body.
 func (rw *responseWriter) RequestSize() int64 {
-	return 0 // TODO: implement
+	return rw.reqBody.size
 }
 
 // ResponseSize returns the size of response body.
@@ -173,4 +174,20 @@ func (rw *responseWriter) WriteHeaderTime() time.Time {
 
 func (rw *responseWriter) private() {
 	// nothing to do
+}
+
+// sizeReader wraps the io.Reader and returns the size of the read bytes.
+type sizeReader struct {
+	r    io.ReadCloser
+	size int64
+}
+
+func (r *sizeReader) Read(p []byte) (int, error) {
+	n, err := r.r.Read(p)
+	r.size += int64(n)
+	return n, err
+}
+
+func (r *sizeReader) Close() error {
+	return r.r.Close()
 }

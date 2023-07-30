@@ -1,6 +1,7 @@
 package httplogger
 
 import (
+	"io"
 	"net/http"
 	"time"
 )
@@ -53,14 +54,18 @@ type loggingHandler struct {
 }
 
 func (h *loggingHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	req := *r // shallow copy
+	body := &sizeReader{r: r.Body}
+	req.Body = body
 	lrw := &responseWriter{
 		rw:          w,
-		req:         r,
+		req:         &req,
 		logger:      h.logger,
 		requestTime: time.Now(),
 	}
 	h.handler.ServeHTTP(wrap(lrw), r)
 	if !lrw.hijacked {
+		io.Copy(io.Discard, body)
 		h.logger.WriteHTTPLog(lrw, r)
 	}
 }
