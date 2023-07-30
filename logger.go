@@ -27,10 +27,13 @@ type rwUnwrapper interface {
 // status code and body size
 type responseWriter struct {
 	rw          http.ResponseWriter
+	req         *http.Request
+	logger      Logger
 	wroteHeader bool
 	status      int
 	size        int
 	t           time.Time
+	hijacked    bool
 }
 
 func (rw *responseWriter) Header() http.Header {
@@ -105,10 +108,13 @@ func (rw *responseWriter) Time() time.Time {
 func (rw *responseWriter) Hijack() (net.Conn, *bufio.ReadWriter, error) {
 	h := rw.rw.(http.Hijacker)
 	conn, buf, err := h.Hijack()
-	if err == nil && rw.status == 0 {
+	if err == nil {
 		// The status will be StatusSwitchingProtocols if there was no error and
 		// WriteHeader has not been called yet
 		rw.status = http.StatusSwitchingProtocols
+		rw.hijacked = true
+		rw.wroteHeader = true
+		rw.logger.WriteHTTPLog(rw, rw.req)
 	}
 	return conn, buf, err
 }
