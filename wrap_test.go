@@ -40,7 +40,7 @@ func TestWrap_Flusher(t *testing.T) {
 		t.Error("want not to implement http.ReaderFrom, but it does")
 	}
 	if _, ok := got.(io.StringWriter); ok {
-		t.Error("want not to implement io.io.StringWriter, but it does")
+		t.Error("want not to implement io.StringWriter, but it does")
 	}
 	if _, ok := got.(http.Pusher); ok {
 		t.Error("want not to implement http.Pusher, but it does")
@@ -78,7 +78,7 @@ func TestWrap_CloseNotify(t *testing.T) {
 		t.Error("want not to implement http.ReaderFrom, but it does")
 	}
 	if _, ok := got.(io.StringWriter); ok {
-		t.Error("want not to implement io.io.StringWriter, but it does")
+		t.Error("want not to implement io.StringWriter, but it does")
 	}
 	if _, ok := got.(http.Pusher); ok {
 		t.Error("want not to implement http.Pusher, but it does")
@@ -108,7 +108,7 @@ func TestWrap_Hijacker(t *testing.T) {
 		t.Error("want not to implement http.ReaderFrom, but it does")
 	}
 	if _, ok := got.(io.StringWriter); ok {
-		t.Error("want not to implement io.io.StringWriter, but it does")
+		t.Error("want not to implement io.StringWriter, but it does")
 	}
 	if _, ok := got.(http.Pusher); ok {
 		t.Error("want not to implement http.Pusher, but it does")
@@ -145,7 +145,7 @@ func TestWrap_ReaderFrom(t *testing.T) {
 		t.Errorf("got %q, want %q", rw.buf.String(), "hello")
 	}
 	if _, ok := got.(io.StringWriter); ok {
-		t.Error("want not to implement io.io.StringWriter, but it does")
+		t.Error("want not to implement io.StringWriter, but it does")
 	}
 	if _, ok := got.(http.Pusher); ok {
 		t.Error("want not to implement http.Pusher, but it does")
@@ -177,7 +177,7 @@ func TestWrap_StringWriter(t *testing.T) {
 		t.Error("want not to implement http.ReaderFrom, but it does")
 	}
 	if sw, ok := got.(io.StringWriter); !ok {
-		t.Error("want to implement io.io.StringWriter, but it doesn't")
+		t.Error("want to implement io.StringWriter, but it doesn't")
 	} else {
 		sw.WriteString("hello")
 	}
@@ -215,7 +215,7 @@ func TestWrap_Pusher(t *testing.T) {
 		t.Error("want not to implement http.ReaderFrom, but it does")
 	}
 	if _, ok := got.(io.StringWriter); ok {
-		t.Error("want not to implement io.io.StringWriter, but it does")
+		t.Error("want not to implement io.StringWriter, but it does")
 	}
 	if pusher, ok := got.(http.Pusher); !ok {
 		t.Error("want to implement http.Pusher, but it doesn't")
