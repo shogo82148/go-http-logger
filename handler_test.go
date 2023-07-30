@@ -17,7 +17,7 @@ func ExampleLoggingHandler() {
 	})
 
 	loggingHandler := httplogger.LoggingHandler(httplogger.LoggerFunc(func(l httplogger.ResponseLog, r *http.Request) {
-		fmt.Println("size:", l.RequestSize())
+		fmt.Println("size:", l.ResponseSize())
 		fmt.Println("status:", l.Status())
 		fmt.Println("method:", r.Method)
 		fmt.Println("request uri:", r.RequestURI)
