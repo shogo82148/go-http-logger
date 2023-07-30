@@ -6,6 +6,7 @@ import (
 	"io"
 	"net"
 	"net/http"
+	"strings"
 	"testing"
 )
 
@@ -116,14 +117,16 @@ func TestWrap_Hijacker(t *testing.T) {
 
 type dummyReaderFrom struct {
 	http.ResponseWriter
+	buf bytes.Buffer
 }
 
-func (dummyReaderFrom) ReadFrom(r io.Reader) (n int64, err error) {
-	panic("unreachable")
+func (rw *dummyReaderFrom) ReadFrom(r io.Reader) (n int64, err error) {
+	return rw.buf.ReadFrom(r)
 }
 
 func TestWrap_ReaderFrom(t *testing.T) {
-	got := wrap(&responseWriter{rw: dummyReaderFrom{}})
+	rw := &dummyReaderFrom{}
+	got := wrap(&responseWriter{rw: rw})
 	if _, ok := got.(http.Flusher); ok {
 		t.Error("want not to implement http.Flusher, but it does")
 	}
@@ -133,8 +136,13 @@ func TestWrap_ReaderFrom(t *testing.T) {
 	if _, ok := got.(http.Hijacker); ok {
 		t.Error("want not to implement http.Hijacker, but it does")
 	}
-	if _, ok := got.(io.ReaderFrom); !ok {
+	if reader, ok := got.(io.ReaderFrom); !ok {
 		t.Error("want to implement http.ReaderFrom, but it doesn't")
+	} else {
+		reader.ReadFrom(strings.NewReader("hello"))
+	}
+	if rw.buf.String() != "hello" {
+		t.Errorf("got %q, want %q", rw.buf.String(), "hello")
 	}
 	if _, ok := got.(stringWriter); ok {
 		t.Error("want not to implement io.StringWriter, but it does")
