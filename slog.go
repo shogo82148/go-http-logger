@@ -5,6 +5,8 @@ package httplogger
 
 import (
 	"log/slog"
+	"net/http"
+	"time"
 )
 
 type slogLogger struct {
@@ -35,7 +37,7 @@ func (log *slogLogger) WriteHTTPLog(attrs Attrs, r *http.Request) {
 		log.msg,
 
 		// Time the request was received
-		slog.Time("time", attrs.RequestSize()),
+		slog.Time("time", attrs.RequestTime()),
 
 		// Remote host
 		slog.String("host", r.RemoteAddr),
