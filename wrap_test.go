@@ -2,6 +2,7 @@ package httplogger
 
 import (
 	"bufio"
+	"bytes"
 	"io"
 	"net"
 	"net/http"
@@ -133,14 +134,16 @@ func TestWrap_ReaderFrom(t *testing.T) {
 
 type dummyStringWriter struct {
 	http.ResponseWriter
+	buf bytes.Buffer
 }
 
-func (dummyStringWriter) WriteString(s string) (n int, err error) {
-	panic("unreachable")
+func (rw *dummyStringWriter) WriteString(s string) (n int, err error) {
+	return rw.buf.WriteString(s)
 }
 
 func TestWrap_StringWriter(t *testing.T) {
-	got := wrap(&responseWriter{rw: dummyStringWriter{}})
+	rw := &dummyStringWriter{}
+	got := wrap(&responseWriter{rw: rw})
 	if _, ok := got.(http.Flusher); ok {
 		t.Error("want not to implement http.Flusher, but it does")
 	}
@@ -153,7 +156,12 @@ func TestWrap_StringWriter(t *testing.T) {
 	if _, ok := got.(io.ReaderFrom); ok {
 		t.Error("want not to implement http.ReaderFrom, but it does")
 	}
-	if _, ok := got.(stringWriter); !ok {
+	if sw, ok := got.(stringWriter); !ok {
 		t.Error("want to implement io.StringWriter, but it doesn't")
+	} else {
+		sw.WriteString("hello")
+	}
+	if rw.buf.String() != "hello" {
+		t.Errorf("want %q, but %q", "hello", rw.buf.String())
 	}
 }
