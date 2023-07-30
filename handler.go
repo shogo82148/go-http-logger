@@ -10,8 +10,13 @@ type private interface {
 	private()
 }
 
-// ResponseLog is the information of the response.
-type ResponseLog interface {
+// ResponseLog is the interface for the response information.
+//
+// Deprecated: Use Attrs instead.
+type ResponseLog = Attrs
+
+// Attrs is the information of the response.
+type Attrs interface {
 	// Header returns HTTP Header of the response.
 	Header() http.Header
 
@@ -45,7 +50,7 @@ type ResponseLog interface {
 
 // Logger is the interface for your custom logger.
 type Logger interface {
-	WriteHTTPLog(l ResponseLog, r *http.Request)
+	WriteHTTPLog(l Attrs, r *http.Request)
 }
 
 type loggingHandler struct {
@@ -79,9 +84,9 @@ func LoggingHandler(logger Logger, handler http.Handler) http.Handler {
 }
 
 // The LoggerFunc type is an adapter to allow the use of ordinary functions as Logger.
-type LoggerFunc func(l ResponseLog, r *http.Request)
+type LoggerFunc func(l Attrs, r *http.Request)
 
 // WriteHTTPLog implements the Logger interface.
-func (f LoggerFunc) WriteHTTPLog(l ResponseLog, r *http.Request) {
+func (f LoggerFunc) WriteHTTPLog(l Attrs, r *http.Request) {
 	f(l, r)
 }

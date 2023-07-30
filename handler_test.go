@@ -16,7 +16,7 @@ func ExampleLoggingHandler() {
 		fmt.Fprint(w, "Hello World")
 	})
 
-	loggingHandler := httplogger.LoggingHandler(httplogger.LoggerFunc(func(l httplogger.ResponseLog, r *http.Request) {
+	loggingHandler := httplogger.LoggingHandler(httplogger.LoggerFunc(func(l httplogger.Attrs, r *http.Request) {
 		fmt.Println("size:", l.ResponseSize())
 		fmt.Println("status:", l.Status())
 		fmt.Println("method:", r.Method)
@@ -59,7 +59,7 @@ func TestHijack(t *testing.T) {
 		}
 	})
 
-	loggingHandler := httplogger.LoggingHandler(httplogger.LoggerFunc(func(l httplogger.ResponseLog, r *http.Request) {
+	loggingHandler := httplogger.LoggingHandler(httplogger.LoggerFunc(func(l httplogger.Attrs, r *http.Request) {
 		if l.Status() != http.StatusSwitchingProtocols {
 			t.Errorf("unexpected status code: %d", l.Status())
 		}

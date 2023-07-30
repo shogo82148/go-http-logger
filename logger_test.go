@@ -25,7 +25,7 @@ func TestWriteHeader(t *testing.T) {
 		fmt.Fprint(w, "Hello World")
 	})
 
-	loggingHandler := httplogger.LoggingHandler(httplogger.LoggerFunc(func(l httplogger.ResponseLog, r *http.Request) {
+	loggingHandler := httplogger.LoggingHandler(httplogger.LoggerFunc(func(l httplogger.Attrs, r *http.Request) {
 		if l.Status() != http.StatusOK {
 			t.Errorf("unexpected status code: %d", l.Status())
 		}

@@ -23,7 +23,7 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprint(w, "Hello World")
 }
 
-func Logger(l httplogger.ResponseLog, r *http.Request) {
+func Logger(l httplogger.Attrs, r *http.Request) {
 	log.Println("size:", l.RequestSize())
 	log.Println("status:", l.Status())
 	log.Println("method:", r.Method)
