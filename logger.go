@@ -15,6 +15,10 @@ type stringWriter interface {
 	WriteString(s string) (n int, err error)
 }
 
+type rwUnwrapper interface {
+	Unwrap() http.ResponseWriter
+}
+
 // responseWriter is wrapper of http.ResponseWriter that keeps track of its HTTP
 // status code and body size
 type responseWriter struct {
@@ -101,4 +105,10 @@ func (rw *responseWriter) Push(target string, opts *http.PushOptions) error {
 		return p.Push(target, opts)
 	}
 	return http.ErrNotSupported
+}
+
+// Unwrap returns the original http.ResponseWriter underlying this.
+// It is used by [net/http.ResponseController].
+func (rw *responseWriter) Unwrap() http.ResponseWriter {
+	return rw.rw
 }
