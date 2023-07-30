@@ -26,14 +26,15 @@ type rwUnwrapper interface {
 // responseWriter is wrapper of http.ResponseWriter that keeps track of its HTTP
 // status code and body size
 type responseWriter struct {
-	rw          http.ResponseWriter
-	req         *http.Request
-	logger      Logger
-	wroteHeader bool
-	status      int
-	size        int
-	t           time.Time
-	hijacked    bool
+	rw              http.ResponseWriter
+	req             *http.Request
+	logger          Logger
+	wroteHeader     bool
+	status          int
+	responseSize    int64
+	requestTime     time.Time
+	writeHeaderTime time.Time
+	hijacked        bool
 }
 
 func (rw *responseWriter) Header() http.Header {
@@ -42,13 +43,10 @@ func (rw *responseWriter) Header() http.Header {
 
 func (rw *responseWriter) Write(b []byte) (int, error) {
 	if !rw.wroteHeader {
-		// The status will be StatusOK if WriteHeader has not been called yet
-		rw.rw.WriteHeader(http.StatusOK)
-		rw.status = http.StatusOK
-		rw.wroteHeader = true
+		rw.WriteHeader(http.StatusOK)
 	}
 	size, err := rw.rw.Write(b)
-	rw.size += size
+	rw.responseSize += int64(size)
 	return size, err
 }
 
@@ -61,6 +59,7 @@ func (rw *responseWriter) WriteHeader(s int) {
 	rw.rw.WriteHeader(s)
 	rw.status = s
 	rw.wroteHeader = true
+	rw.writeHeaderTime = time.Now()
 }
 
 // relevantCaller searches the call stack for the first function outside of net/http.
@@ -91,7 +90,7 @@ func (rw *responseWriter) Status() int {
 }
 
 func (rw *responseWriter) Size() int {
-	return rw.size
+	return int(rw.responseSize)
 }
 
 func (rw *responseWriter) Flush() {
@@ -102,7 +101,7 @@ func (rw *responseWriter) Flush() {
 }
 
 func (rw *responseWriter) Time() time.Time {
-	return rw.t
+	return rw.requestTime
 }
 
 func (rw *responseWriter) Hijack() (net.Conn, *bufio.ReadWriter, error) {
@@ -114,6 +113,7 @@ func (rw *responseWriter) Hijack() (net.Conn, *bufio.ReadWriter, error) {
 		rw.status = http.StatusSwitchingProtocols
 		rw.hijacked = true
 		rw.wroteHeader = true
+		rw.writeHeaderTime = time.Now()
 		rw.logger.WriteHTTPLog(rw, rw.req)
 	}
 	return conn, buf, err
@@ -149,4 +149,28 @@ func (rw *responseWriter) Push(target string, opts *http.PushOptions) error {
 // It is used by [net/http.ResponseController].
 func (rw *responseWriter) Unwrap() http.ResponseWriter {
 	return rw.rw
+}
+
+// RequestSize returns the size of request body.
+func (rw *responseWriter) RequestSize() int64 {
+	return 0 // TODO: implement
+}
+
+// ResponseSize returns the size of response body.
+func (rw *responseWriter) ResponseSize() int64 {
+	return rw.responseSize
+}
+
+// RequestTime returns the time when the request was received.
+func (rw *responseWriter) RequestTime() time.Time {
+	return rw.requestTime
+}
+
+// WriteHeaderTime returns the time when the response header was written.
+func (rw *responseWriter) WriteHeaderTime() time.Time {
+	return rw.writeHeaderTime
+}
+
+func (rw *responseWriter) private() {
+	// nothing to do
 }
