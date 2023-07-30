@@ -1,4 +1,5 @@
 [![test](https://github.com/shogo82148/go-http-logger/actions/workflows/test.yml/badge.svg)](https://github.com/shogo82148/go-http-logger/actions/workflows/test.yml)
+[![Go Reference](https://pkg.go.dev/badge/github.com/shogo82148/go-http-logger.svg)](https://pkg.go.dev/github.com/shogo82148/go-http-logger)
 
 # go-http-logger
 
