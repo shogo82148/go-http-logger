@@ -31,451 +31,515 @@ func wrap(rw *responseWriter) http.ResponseWriter {
 	case 0x0:
 		return struct {
 			http.ResponseWriter
-		}{rw}
+			rwUnwrapper
+		}{rw, rw}
 	case 0x1:
 		return struct {
 			http.ResponseWriter
+			rwUnwrapper
 			http.Flusher
-		}{rw, rw}
+		}{rw, rw, rw}
 	case 0x2:
 		return struct {
 			http.ResponseWriter
+			rwUnwrapper
 			http.CloseNotifier
-		}{rw, rw}
+		}{rw, rw, rw}
 	case 0x3:
 		return struct {
 			http.ResponseWriter
+			rwUnwrapper
 			http.Flusher
 			http.CloseNotifier
-		}{rw, rw, rw}
+		}{rw, rw, rw, rw}
 	case 0x4:
 		return struct {
 			http.ResponseWriter
+			rwUnwrapper
 			http.Hijacker
-		}{rw, rw}
+		}{rw, rw, rw}
 	case 0x5:
 		return struct {
 			http.ResponseWriter
+			rwUnwrapper
 			http.Flusher
 			http.Hijacker
-		}{rw, rw, rw}
+		}{rw, rw, rw, rw}
 	case 0x6:
 		return struct {
 			http.ResponseWriter
+			rwUnwrapper
 			http.CloseNotifier
 			http.Hijacker
-		}{rw, rw, rw}
+		}{rw, rw, rw, rw}
 	case 0x7:
 		return struct {
 			http.ResponseWriter
+			rwUnwrapper
 			http.Flusher
 			http.CloseNotifier
 			http.Hijacker
-		}{rw, rw, rw, rw}
+		}{rw, rw, rw, rw, rw}
 	case 0x8:
 		return struct {
 			http.ResponseWriter
+			rwUnwrapper
 			io.ReaderFrom
-		}{rw, rw}
+		}{rw, rw, rw}
 	case 0x9:
 		return struct {
 			http.ResponseWriter
+			rwUnwrapper
 			http.Flusher
 			io.ReaderFrom
-		}{rw, rw, rw}
+		}{rw, rw, rw, rw}
 	case 0xa:
 		return struct {
 			http.ResponseWriter
+			rwUnwrapper
 			http.CloseNotifier
 			io.ReaderFrom
-		}{rw, rw, rw}
+		}{rw, rw, rw, rw}
 	case 0xb:
 		return struct {
 			http.ResponseWriter
+			rwUnwrapper
 			http.Flusher
 			http.CloseNotifier
 			io.ReaderFrom
-		}{rw, rw, rw, rw}
+		}{rw, rw, rw, rw, rw}
 	case 0xc:
 		return struct {
 			http.ResponseWriter
+			rwUnwrapper
 			http.Hijacker
 			io.ReaderFrom
-		}{rw, rw, rw}
+		}{rw, rw, rw, rw}
 	case 0xd:
 		return struct {
 			http.ResponseWriter
+			rwUnwrapper
 			http.Flusher
 			http.Hijacker
 			io.ReaderFrom
-		}{rw, rw, rw, rw}
+		}{rw, rw, rw, rw, rw}
 	case 0xe:
 		return struct {
 			http.ResponseWriter
+			rwUnwrapper
 			http.CloseNotifier
 			http.Hijacker
 			io.ReaderFrom
-		}{rw, rw, rw, rw}
+		}{rw, rw, rw, rw, rw}
 	case 0xf:
 		return struct {
 			http.ResponseWriter
+			rwUnwrapper
 			http.Flusher
 			http.CloseNotifier
 			http.Hijacker
 			io.ReaderFrom
-		}{rw, rw, rw, rw, rw}
+		}{rw, rw, rw, rw, rw, rw}
 	case 0x10:
 		return struct {
 			http.ResponseWriter
+			rwUnwrapper
 			stringWriter
-		}{rw, rw}
+		}{rw, rw, rw}
 	case 0x11:
 		return struct {
 			http.ResponseWriter
+			rwUnwrapper
 			http.Flusher
 			stringWriter
-		}{rw, rw, rw}
+		}{rw, rw, rw, rw}
 	case 0x12:
 		return struct {
 			http.ResponseWriter
+			rwUnwrapper
 			http.CloseNotifier
 			stringWriter
-		}{rw, rw, rw}
+		}{rw, rw, rw, rw}
 	case 0x13:
 		return struct {
 			http.ResponseWriter
+			rwUnwrapper
 			http.Flusher
 			http.CloseNotifier
 			stringWriter
-		}{rw, rw, rw, rw}
+		}{rw, rw, rw, rw, rw}
 	case 0x14:
 		return struct {
 			http.ResponseWriter
+			rwUnwrapper
 			http.Hijacker
 			stringWriter
-		}{rw, rw, rw}
+		}{rw, rw, rw, rw}
 	case 0x15:
 		return struct {
 			http.ResponseWriter
+			rwUnwrapper
 			http.Flusher
 			http.Hijacker
 			stringWriter
-		}{rw, rw, rw, rw}
+		}{rw, rw, rw, rw, rw}
 	case 0x16:
 		return struct {
 			http.ResponseWriter
+			rwUnwrapper
 			http.CloseNotifier
 			http.Hijacker
 			stringWriter
-		}{rw, rw, rw, rw}
+		}{rw, rw, rw, rw, rw}
 	case 0x17:
 		return struct {
 			http.ResponseWriter
+			rwUnwrapper
 			http.Flusher
 			http.CloseNotifier
 			http.Hijacker
 			stringWriter
-		}{rw, rw, rw, rw, rw}
+		}{rw, rw, rw, rw, rw, rw}
 	case 0x18:
 		return struct {
 			http.ResponseWriter
+			rwUnwrapper
 			io.ReaderFrom
 			stringWriter
-		}{rw, rw, rw}
+		}{rw, rw, rw, rw}
 	case 0x19:
 		return struct {
 			http.ResponseWriter
+			rwUnwrapper
 			http.Flusher
 			io.ReaderFrom
 			stringWriter
-		}{rw, rw, rw, rw}
+		}{rw, rw, rw, rw, rw}
 	case 0x1a:
 		return struct {
 			http.ResponseWriter
+			rwUnwrapper
 			http.CloseNotifier
 			io.ReaderFrom
 			stringWriter
-		}{rw, rw, rw, rw}
+		}{rw, rw, rw, rw, rw}
 	case 0x1b:
 		return struct {
 			http.ResponseWriter
+			rwUnwrapper
 			http.Flusher
 			http.CloseNotifier
 			io.ReaderFrom
 			stringWriter
-		}{rw, rw, rw, rw, rw}
+		}{rw, rw, rw, rw, rw, rw}
 	case 0x1c:
 		return struct {
 			http.ResponseWriter
+			rwUnwrapper
 			http.Hijacker
 			io.ReaderFrom
 			stringWriter
-		}{rw, rw, rw, rw}
+		}{rw, rw, rw, rw, rw}
 	case 0x1d:
 		return struct {
 			http.ResponseWriter
+			rwUnwrapper
 			http.Flusher
 			http.Hijacker
 			io.ReaderFrom
 			stringWriter
-		}{rw, rw, rw, rw, rw}
+		}{rw, rw, rw, rw, rw, rw}
 	case 0x1e:
 		return struct {
 			http.ResponseWriter
+			rwUnwrapper
 			http.CloseNotifier
 			http.Hijacker
 			io.ReaderFrom
 			stringWriter
-		}{rw, rw, rw, rw, rw}
+		}{rw, rw, rw, rw, rw, rw}
 	case 0x1f:
 		return struct {
 			http.ResponseWriter
+			rwUnwrapper
 			http.Flusher
 			http.CloseNotifier
 			http.Hijacker
 			io.ReaderFrom
 			stringWriter
-		}{rw, rw, rw, rw, rw, rw}
+		}{rw, rw, rw, rw, rw, rw, rw}
 	case 0x20:
 		return struct {
 			http.ResponseWriter
+			rwUnwrapper
 			http.Pusher
-		}{rw, rw}
+		}{rw, rw, rw}
 	case 0x21:
 		return struct {
 			http.ResponseWriter
+			rwUnwrapper
 			http.Flusher
 			http.Pusher
-		}{rw, rw, rw}
+		}{rw, rw, rw, rw}
 	case 0x22:
 		return struct {
 			http.ResponseWriter
+			rwUnwrapper
 			http.CloseNotifier
 			http.Pusher
-		}{rw, rw, rw}
+		}{rw, rw, rw, rw}
 	case 0x23:
 		return struct {
 			http.ResponseWriter
+			rwUnwrapper
 			http.Flusher
 			http.CloseNotifier
 			http.Pusher
-		}{rw, rw, rw, rw}
+		}{rw, rw, rw, rw, rw}
 	case 0x24:
 		return struct {
 			http.ResponseWriter
+			rwUnwrapper
 			http.Hijacker
 			http.Pusher
-		}{rw, rw, rw}
+		}{rw, rw, rw, rw}
 	case 0x25:
 		return struct {
 			http.ResponseWriter
+			rwUnwrapper
 			http.Flusher
 			http.Hijacker
 			http.Pusher
-		}{rw, rw, rw, rw}
+		}{rw, rw, rw, rw, rw}
 	case 0x26:
 		return struct {
 			http.ResponseWriter
+			rwUnwrapper
 			http.CloseNotifier
 			http.Hijacker
 			http.Pusher
-		}{rw, rw, rw, rw}
+		}{rw, rw, rw, rw, rw}
 	case 0x27:
 		return struct {
 			http.ResponseWriter
+			rwUnwrapper
 			http.Flusher
 			http.CloseNotifier
 			http.Hijacker
 			http.Pusher
-		}{rw, rw, rw, rw, rw}
+		}{rw, rw, rw, rw, rw, rw}
 	case 0x28:
 		return struct {
 			http.ResponseWriter
+			rwUnwrapper
 			io.ReaderFrom
 			http.Pusher
-		}{rw, rw, rw}
+		}{rw, rw, rw, rw}
 	case 0x29:
 		return struct {
 			http.ResponseWriter
+			rwUnwrapper
 			http.Flusher
 			io.ReaderFrom
 			http.Pusher
-		}{rw, rw, rw, rw}
+		}{rw, rw, rw, rw, rw}
 	case 0x2a:
 		return struct {
 			http.ResponseWriter
+			rwUnwrapper
 			http.CloseNotifier
 			io.ReaderFrom
 			http.Pusher
-		}{rw, rw, rw, rw}
+		}{rw, rw, rw, rw, rw}
 	case 0x2b:
 		return struct {
 			http.ResponseWriter
+			rwUnwrapper
 			http.Flusher
 			http.CloseNotifier
 			io.ReaderFrom
 			http.Pusher
-		}{rw, rw, rw, rw, rw}
+		}{rw, rw, rw, rw, rw, rw}
 	case 0x2c:
 		return struct {
 			http.ResponseWriter
+			rwUnwrapper
 			http.Hijacker
 			io.ReaderFrom
 			http.Pusher
-		}{rw, rw, rw, rw}
+		}{rw, rw, rw, rw, rw}
 	case 0x2d:
 		return struct {
 			http.ResponseWriter
+			rwUnwrapper
 			http.Flusher
 			http.Hijacker
 			io.ReaderFrom
 			http.Pusher
-		}{rw, rw, rw, rw, rw}
+		}{rw, rw, rw, rw, rw, rw}
 	case 0x2e:
 		return struct {
 			http.ResponseWriter
+			rwUnwrapper
 			http.CloseNotifier
 			http.Hijacker
 			io.ReaderFrom
 			http.Pusher
-		}{rw, rw, rw, rw, rw}
+		}{rw, rw, rw, rw, rw, rw}
 	case 0x2f:
 		return struct {
 			http.ResponseWriter
+			rwUnwrapper
 			http.Flusher
 			http.CloseNotifier
 			http.Hijacker
 			io.ReaderFrom
 			http.Pusher
-		}{rw, rw, rw, rw, rw, rw}
+		}{rw, rw, rw, rw, rw, rw, rw}
 	case 0x30:
 		return struct {
 			http.ResponseWriter
+			rwUnwrapper
 			stringWriter
 			http.Pusher
-		}{rw, rw, rw}
+		}{rw, rw, rw, rw}
 	case 0x31:
 		return struct {
 			http.ResponseWriter
+			rwUnwrapper
 			http.Flusher
 			stringWriter
 			http.Pusher
-		}{rw, rw, rw, rw}
+		}{rw, rw, rw, rw, rw}
 	case 0x32:
 		return struct {
 			http.ResponseWriter
+			rwUnwrapper
 			http.CloseNotifier
 			stringWriter
 			http.Pusher
-		}{rw, rw, rw, rw}
+		}{rw, rw, rw, rw, rw}
 	case 0x33:
 		return struct {
 			http.ResponseWriter
+			rwUnwrapper
 			http.Flusher
 			http.CloseNotifier
 			stringWriter
 			http.Pusher
-		}{rw, rw, rw, rw, rw}
+		}{rw, rw, rw, rw, rw, rw}
 	case 0x34:
 		return struct {
 			http.ResponseWriter
+			rwUnwrapper
 			http.Hijacker
 			stringWriter
 			http.Pusher
-		}{rw, rw, rw, rw}
+		}{rw, rw, rw, rw, rw}
 	case 0x35:
 		return struct {
 			http.ResponseWriter
+			rwUnwrapper
 			http.Flusher
 			http.Hijacker
 			stringWriter
 			http.Pusher
-		}{rw, rw, rw, rw, rw}
+		}{rw, rw, rw, rw, rw, rw}
 	case 0x36:
 		return struct {
 			http.ResponseWriter
+			rwUnwrapper
 			http.CloseNotifier
 			http.Hijacker
 			stringWriter
 			http.Pusher
-		}{rw, rw, rw, rw, rw}
+		}{rw, rw, rw, rw, rw, rw}
 	case 0x37:
 		return struct {
 			http.ResponseWriter
+			rwUnwrapper
 			http.Flusher
 			http.CloseNotifier
 			http.Hijacker
 			stringWriter
 			http.Pusher
-		}{rw, rw, rw, rw, rw, rw}
+		}{rw, rw, rw, rw, rw, rw, rw}
 	case 0x38:
 		return struct {
 			http.ResponseWriter
+			rwUnwrapper
 			io.ReaderFrom
 			stringWriter
 			http.Pusher
-		}{rw, rw, rw, rw}
+		}{rw, rw, rw, rw, rw}
 	case 0x39:
 		return struct {
 			http.ResponseWriter
+			rwUnwrapper
 			http.Flusher
 			io.ReaderFrom
 			stringWriter
 			http.Pusher
-		}{rw, rw, rw, rw, rw}
+		}{rw, rw, rw, rw, rw, rw}
 	case 0x3a:
 		return struct {
 			http.ResponseWriter
+			rwUnwrapper
 			http.CloseNotifier
 			io.ReaderFrom
 			stringWriter
 			http.Pusher
-		}{rw, rw, rw, rw, rw}
+		}{rw, rw, rw, rw, rw, rw}
 	case 0x3b:
 		return struct {
 			http.ResponseWriter
+			rwUnwrapper
 			http.Flusher
 			http.CloseNotifier
 			io.ReaderFrom
 			stringWriter
 			http.Pusher
-		}{rw, rw, rw, rw, rw, rw}
+		}{rw, rw, rw, rw, rw, rw, rw}
 	case 0x3c:
 		return struct {
 			http.ResponseWriter
+			rwUnwrapper
 			http.Hijacker
 			io.ReaderFrom
 			stringWriter
 			http.Pusher
-		}{rw, rw, rw, rw, rw}
+		}{rw, rw, rw, rw, rw, rw}
 	case 0x3d:
 		return struct {
 			http.ResponseWriter
+			rwUnwrapper
 			http.Flusher
 			http.Hijacker
 			io.ReaderFrom
 			stringWriter
 			http.Pusher
-		}{rw, rw, rw, rw, rw, rw}
+		}{rw, rw, rw, rw, rw, rw, rw}
 	case 0x3e:
 		return struct {
 			http.ResponseWriter
-			http.CloseNotifier
-			http.Hijacker
-			io.ReaderFrom
-			stringWriter
-			http.Pusher
-		}{rw, rw, rw, rw, rw, rw}
-	case 0x3f:
-		return struct {
-			http.ResponseWriter
-			http.Flusher
+			rwUnwrapper
 			http.CloseNotifier
 			http.Hijacker
 			io.ReaderFrom
 			stringWriter
 			http.Pusher
 		}{rw, rw, rw, rw, rw, rw, rw}
+	case 0x3f:
+		return struct {
+			http.ResponseWriter
+			rwUnwrapper
+			http.Flusher
+			http.CloseNotifier
+			http.Hijacker
+			io.ReaderFrom
+			stringWriter
+			http.Pusher
+		}{rw, rw, rw, rw, rw, rw, rw, rw}
 	}
 	panic("unreachable")
 }
