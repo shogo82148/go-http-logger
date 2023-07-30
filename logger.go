@@ -14,11 +14,6 @@ import (
 	"time"
 )
 
-// backport of io.StringWriter from Go 1.11
-type stringWriter interface {
-	WriteString(s string) (n int, err error)
-}
-
 type rwUnwrapper interface {
 	Unwrap() http.ResponseWriter
 }
@@ -126,7 +121,7 @@ func (rw *responseWriter) CloseNotify() <-chan bool {
 }
 
 func (rw *responseWriter) WriteString(str string) (int, error) {
-	if s, ok := rw.rw.(stringWriter); ok {
+	if s, ok := rw.rw.(io.StringWriter); ok {
 		return s.WriteString(str)
 	}
 	return rw.rw.Write([]byte(str))
