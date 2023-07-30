@@ -5,8 +5,12 @@ package httplogger
 import (
 	"bufio"
 	"io"
+	"log"
 	"net"
 	"net/http"
+	"path"
+	"runtime"
+	"strings"
 	"time"
 )
 
@@ -22,10 +26,11 @@ type rwUnwrapper interface {
 // responseWriter is wrapper of http.ResponseWriter that keeps track of its HTTP
 // status code and body size
 type responseWriter struct {
-	rw     http.ResponseWriter
-	status int
-	size   int
-	t      time.Time
+	rw          http.ResponseWriter
+	wroteHeader bool
+	status      int
+	size        int
+	t           time.Time
 }
 
 func (rw *responseWriter) Header() http.Header {
@@ -33,9 +38,11 @@ func (rw *responseWriter) Header() http.Header {
 }
 
 func (rw *responseWriter) Write(b []byte) (int, error) {
-	if rw.status == 0 {
+	if !rw.wroteHeader {
 		// The status will be StatusOK if WriteHeader has not been called yet
+		rw.rw.WriteHeader(http.StatusOK)
 		rw.status = http.StatusOK
+		rw.wroteHeader = true
 	}
 	size, err := rw.rw.Write(b)
 	rw.size += size
@@ -43,8 +50,33 @@ func (rw *responseWriter) Write(b []byte) (int, error) {
 }
 
 func (rw *responseWriter) WriteHeader(s int) {
+	if rw.wroteHeader {
+		caller := relevantCaller()
+		log.Printf("httplogger: superfluous response.WriteHeader call from %s (%s:%d)", caller.Function, path.Base(caller.File), caller.Line)
+		return
+	}
 	rw.rw.WriteHeader(s)
 	rw.status = s
+	rw.wroteHeader = true
+}
+
+// relevantCaller searches the call stack for the first function outside of net/http.
+// The purpose of this function is to provide more helpful error messages.
+func relevantCaller() runtime.Frame {
+	pc := make([]uintptr, 16)
+	n := runtime.Callers(1, pc)
+	frames := runtime.CallersFrames(pc[:n])
+	var frame runtime.Frame
+	for {
+		frame, more := frames.Next()
+		if !strings.HasPrefix(frame.Function, "github.com/shogo82148/go-http-logger.") {
+			return frame
+		}
+		if !more {
+			break
+		}
+	}
+	return frame
 }
 
 func (rw *responseWriter) Status() int {
