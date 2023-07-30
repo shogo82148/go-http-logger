@@ -10,16 +10,23 @@ import (
 
 type dummyFlusher struct {
 	http.ResponseWriter
+	called bool
 }
 
-func (dummyFlusher) Flush() {
-	panic("unreachable")
+func (rw *dummyFlusher) Flush() {
+	rw.called = true
 }
 
 func TestWrap_Flusher(t *testing.T) {
-	got := wrap(&responseWriter{rw: dummyFlusher{}})
-	if _, ok := got.(http.Flusher); !ok {
+	rw := &dummyFlusher{}
+	got := wrap(&responseWriter{rw: rw})
+	if flusher, ok := got.(http.Flusher); !ok {
 		t.Error("want to implement http.Flusher, but it doesn't")
+	} else {
+		flusher.Flush()
+	}
+	if !rw.called {
+		t.Error("Flush() is not called")
 	}
 	if _, ok := got.(http.CloseNotifier); ok {
 		t.Error("want not to implement http.CloseNotifier, but it does")
