@@ -18,13 +18,29 @@ type Logger interface {
 	WriteHTTPLog(l ResponseLog, r *http.Request)
 }
 
+type loggingHandler struct {
+	logger  Logger
+	handler http.Handler
+}
+
+func (h *loggingHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	lrw := &responseWriter{
+		rw:     w,
+		req:    r,
+		logger: h.logger,
+	}
+	h.handler.ServeHTTP(wrap(lrw), r)
+	if !lrw.hijacked {
+		h.logger.WriteHTTPLog(lrw, r)
+	}
+}
+
 // LoggingHandler wraps the HTTP handler with the logger.
 func LoggingHandler(logger Logger, handler http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		lrw := &responseWriter{rw: w}
-		handler.ServeHTTP(wrap(lrw), r)
-		logger.WriteHTTPLog(lrw, r)
-	})
+	return &loggingHandler{
+		logger:  logger,
+		handler: handler,
+	}
 }
 
 // The LoggerFunc type is an adapter to allow the use of ordinary functions as Logger.
