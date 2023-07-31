@@ -6,16 +6,32 @@ package httplogger
 import (
 	"log/slog"
 	"net/http"
-	"time"
 )
 
 type slogLogger struct {
 	level  slog.Level
 	msg    string
-	logger slog.Logger
+	logger *slog.Logger
 }
 
-func NewSlogLogger(level slog.Level, msg string, logger slog.Logger) Logger {
+// NewSlogLogger returns a Logger that logs to the given slog.Logger.
+// Logged attributes are:
+//
+//   - received_time: Time the request was received.
+//   - host: Remote host.
+//   - forwardedfor: X-Forwarded-For header.
+//   - user: Remote user.
+//   - req: First line of request.
+//   - method: Request method.
+//   - uri: Request URI.
+//   - protocol: Requested Protocol (usually "HTTP/1.0" or "HTTP/1.1").
+//   - status: HTTP status code of the response.
+//   - sent_bytes: Size of response body in bytes, excluding HTTP headers.
+//   - received_bytes: Size of request body in bytes, excluding HTTP headers.
+//   - referer: Referer header.
+//   - ua: User agent header.
+//   - request_time: Time taken to serve the request, in seconds.
+func NewSlogLogger(level slog.Level, msg string, logger *slog.Logger) Logger {
 	return &slogLogger{
 		level:  level,
 		msg:    msg,
@@ -25,69 +41,69 @@ func NewSlogLogger(level slog.Level, msg string, logger slog.Logger) Logger {
 
 // WriteHTTPLog implements the Logger interface.
 func (log *slogLogger) WriteHTTPLog(attrs Attrs, r *http.Request) {
-	// the names of attrs come from http://ltsv.org/
-
-	now := time.Now()
-	reqtime := now.Sub(attrs.RequestTime())
-	apptime := attrs.WriteHeaderTime().Sub(attrs.RequestTime())
+	reqtime := attrs.WriteHeaderTime().Sub(attrs.RequestTime())
 	user, _, _ := r.BasicAuth()
+
+	// the names of attrs are based on https://github.com/tkuchiki/alp/blob/main/README.md#json
+	// some of them come from https://docs.aws.amazon.com/elasticloadbalancing/latest/application/load-balancer-access-logs.html
+	// and http://ltsv.org/.
 	log.logger.Log(
 		r.Context(),
 		log.level,
 		log.msg,
 
-		// Time the request was received
-		slog.Time("time", attrs.RequestTime()),
+		// Time the request was received.
+		//
+		// "time" is most commonly used, but it is reserved by slog.
+		// So, we use "received_time" instead.
+		slog.Time("received_time", attrs.RequestTime()),
 
-		// Remote host
+		// Remote host.
 		slog.String("host", r.RemoteAddr),
 
-		// X-Forwarded-For header
+		// X-Forwarded-For header.
 		slog.String("forwardedfor", r.Header.Get("X-Forwarded-For")),
 
-		// Remote user
+		// Remote user.
 		slog.String("user", user),
 
-		// First line of request
+		// First line of request.
 		slog.String("req", r.Method+" "+r.RequestURI+" "+r.Proto),
 
-		// Request method
+		// Request method.
 		slog.String("method", r.Method),
 
-		// Request URI
+		// Request URI.
 		slog.String("uri", r.RequestURI),
 
-		// Requested Protocol (usually "HTTP/1.0" or "HTTP/1.1")
+		// Requested Protocol (usually "HTTP/1.0" or "HTTP/1.1").
 		slog.String("protocol", r.Proto),
 
-		// Status code
+		// Status code.
 		slog.Int("status", attrs.Status()),
 
-		// Size of response in bytes, excluding HTTP headers.
-		slog.Int64("size", attrs.ResponseSize()),
+		// Size of response body in bytes, excluding HTTP headers.
+		//
+		// The key name "sent_bytes" comes from ALB log.
+		// Note that ALB log includes HTTP headers however this value does not include them.
+		slog.Int64("sent_bytes", attrs.ResponseSize()),
 
-		// Size of response in bytes, excluding HTTP headers.
-		slog.Int64("reqsize", attrs.RequestSize()),
+		// Size of request body in bytes, excluding HTTP headers.
+		//
+		// The key name "received_bytes" comes from ALB log.
+		// Note that ALB log includes HTTP headers however this value does not include them.
+		slog.Int64("received_bytes", attrs.RequestSize()),
 
-		// Referer header
+		// Referer header.
 		slog.String("referer", r.Referer()),
 
-		// User-Agent header
+		// User-Agent header.
 		slog.String("ua", r.UserAgent()),
 
-		// Host header
+		// Host header.
 		slog.String("vhost", r.Host),
 
-		// The time taken to serve the request
-		slog.Duration("reqtime", reqtime),
-
-		// X-Cache header
-		slog.String("cache", attrs.Header().Get("X-Cache")),
-
-		// Execution time for processing some request, e.g. X-Runtime header for application server or processing time of SQL for DB server.
-		slog.String("runtime", attrs.Header().Get("X-Runtime")),
-
-		// Response time from the upstream server
-		slog.Duration("apptime", apptime),
+		// The time taken to serve the request in seconds.
+		slog.Float64("request_time", reqtime.Seconds()),
 	)
 }
