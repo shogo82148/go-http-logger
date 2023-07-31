@@ -8,6 +8,8 @@ It is similar to "github.com/gorilla/handlers".LoggingHandler, but more flexible
 
 ## SYNOPSIS
 
+If you want to write a custom logger:
+
 ```go
 package main
 
@@ -32,6 +34,31 @@ func Logger(l httplogger.Attrs, r *http.Request) {
 
 func main() {
 	h := httplogger.LoggingHandler(httplogger.LoggerFunc(Logger), http.HandlerFunc(Handler))
+	http.Handle("/", h)
+	http.ListenAndServe(":8000", nil)
+}
+```
+
+Here is a ready-made logger for [log/slog](https://pkg.go.dev/log/slog):
+
+```go
+package main
+
+import (
+	"fmt"
+	"log/slog"
+	"net/http"
+
+	"github.com/shogo82148/go-http-logger"
+)
+
+func Handler(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprint(w, "Hello World")
+}
+
+func main() {
+	logger := NewSlogLogger(slog.LevelInfo, "message for http access", slog.Default())
+	h := httplogger.LoggingHandler(logger, http.HandlerFunc(Handler))
 	http.Handle("/", h)
 	http.ListenAndServe(":8000", nil)
 }
