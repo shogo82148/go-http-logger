@@ -65,6 +65,7 @@ func (h *loggingHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	lrw := &responseWriter{
 		rw:          w,
 		req:         &req,
+		reqBody:     body,
 		logger:      h.logger,
 		requestTime: time.Now(),
 	}
